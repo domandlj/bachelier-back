@@ -14,7 +14,7 @@ app = FastAPI()
 # Set up CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # List the origins that are allowed to make requests
+    allow_origins=["*"],  # List the origins that are allowed to make requests
     allow_credentials=True,
     allow_methods=["*"],  # Allows all HTTP methods
     allow_headers=["*"],  # Allows all headers
@@ -97,8 +97,5 @@ async def get_model(id: str):
 
 if __name__ == "__main__":
     import uvicorn
-    #uvicorn.run(app, host="0.0.0.0", port=8000)
-    import uvicorn
-    port = int(os.environ.get("PORT", 8000))
-    uvicorn.run(app, host="0.0.0.0", port=port)
-
+     #uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8000)
