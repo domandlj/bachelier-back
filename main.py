@@ -36,6 +36,7 @@ client = MongoClient(MONGO_KEY, server_api=ServerApi('1'))
 
 db = client["modeldb"]
 collection = db["models"]
+collection_board = db["board"]
 
 # Pydantic Model to validate the JSON payload
 class IndexedDBData(BaseModel):
@@ -93,6 +94,17 @@ async def get_model(id: str):
     except Exception as e:
         print(f"Error retrieving model: {e}")
         raise HTTPException(status_code=400, detail="Invalid ID format")
+
+
+# GET endpoint to retrieve all models
+@app.get("/models/", response_model=List[Model])
+async def get_all_models():
+    try:
+        models = collection_board.find()
+        return [Model.from_mongo(model) for model in models]
+    except Exception as e:
+        print(f"Error retrieving models: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
 
 
 if __name__ == "__main__":
