@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator, ConfigDict
+from datetime import date, datetime
 from typing import List, Dict, Optional
 from pymongo.server_api import ServerApi
 from bson import ObjectId
@@ -7,6 +8,8 @@ from pymongo import MongoClient
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 import os
+from lecaps import get_lecaps
+import json
 
 
 app = FastAPI()
@@ -60,9 +63,26 @@ class Model(BaseModel):
         # Convert ObjectId to string
         data["_id"] = str(data.get("_id", ""))
         return cls(**data)
+
+
+
+
+
+class Lecap(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+    
+    ticker: str 
+    fechaVencim: str 
+    liqui_secu: Optional[str] = Field(alias='liqui_secu')
+    dias: Optional[int] = None
+    meses: Optional[float] = Field(alias='Meses', default=None)
+    precio: Optional[float] = None
+    total: Optional[float] = Field(alias='total', default=None)
+    tna: Optional[float] = Field(alias='tna', default=None)
+    tem: Optional[float] = None
+    tea: Optional[float] = Field(alias='tea', default=None)
+
 # POST endpoint to store a model
-
-
 @app.post("/models/")
 async def store_model(model: Model):
     model_dict = model.dict(exclude_unset=True)  # Avoid including fields not set
@@ -106,6 +126,16 @@ async def get_all_models():
         print(f"Error retrieving models: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
+@app.get("/securities/fixed/lecaps", response_model=List[Lecap])
+async def get_all_lecaps():
+    try:
+        lecaps_data = get_lecaps()
+        
+        return lecaps_data
+        
+    except Exception as e:
+        print(f"Error retrieving models: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
 
 if __name__ == "__main__":
     import uvicorn
