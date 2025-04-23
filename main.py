@@ -269,6 +269,85 @@ def parse_wsj_rss(url="https://feeds.content.dowjones.io/public/rss/RSSMarketsMa
     
     return news_data
 
+#https://news.google.com/rss/search?q=source:Financial+Times+UK&hl=en-US&gl=US&ceid=US:en
+
+
+def parse_ft_rss(url="https://news.google.com/rss/search?q=source:Financial+Times+UK&hl=en-US&gl=US&ceid=US:en"):
+    # Fetch the RSS feed
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0 Safari/537.36',
+        'Accept': 'application/rss+xml,application/xml'
+    }
+
+    response = requests.get(url, verify=False, headers=headers)
+    response.raise_for_status()
+    
+    # Parse XML content
+    root = ET.fromstring(response.content)
+    channel = root.find('channel')
+    items = channel.findall('item')
+    
+    # Initialize news data structure
+    news_data = []
+    
+    for item in items:
+        # Extract relevant fields
+        title_elem = item.find('title')
+        #description_elem = item.find('description')
+        link_elem = item.find('link')
+        
+        title_text       = title_elem.text.removesuffix(" - Financial Times") or ""
+        #summary_text     = description_elem.text or ""
+        link_text        = link_elem.text or ""
+        article = {
+            "title": title_text,
+            "summary": "",
+            "url": link_text,
+            "source": "Financial Times"
+        }
+                
+        news_data.append(article)
+    return news_data
+
+def parse_jpn_rss(url="https://www.japantimes.co.jp/feed/"):
+    # Fetch the RSS feed
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0 Safari/537.36',
+        'Accept': 'application/rss+xml,application/xml'
+    }
+
+    response = requests.get(url, verify=False, headers=headers)
+    response.raise_for_status()
+    
+    # Parse XML content
+    root = ET.fromstring(response.content)
+    channel = root.find('channel')
+    items = channel.findall('item')
+    
+    # Initialize news data structure
+    news_data = []
+    
+    for item in items:
+        if item.find('category').text != "BUSINESS":
+            continue
+
+        title_elem = item.find('title')
+        description_elem = item.find('description')
+        link_elem = item.find('link')
+        
+        title_text       = title_elem.text or ""
+        summary_text     = description_elem.text or ""
+        link_text        = link_elem.text or ""
+        article = {
+            "title": title_text,
+            "summary": summary_text,
+            "url": link_text,
+            "source": "The Japan Times"
+        }
+                
+        news_data.append(article)
+    return news_data
+
 # GET endpoint for news data
 @app.get("/news", response_model=NewsData)
 async def get_news():
@@ -279,7 +358,8 @@ async def get_news():
     news_data: NewsData = {
         "USA": parse_wsj_rss(),
         "FRA": [],
-        "JPN": [],
+        "JPN": parse_jpn_rss(),
+        "GBR": parse_ft_rss(),
         "ARG": parse_ambito_finanzas_rss()
     }
     return news_data
