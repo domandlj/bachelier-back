@@ -1,5 +1,7 @@
 import pandas as pd
 import numpy as np
+from cohen import cohen
+
 # Sheet info
 sheet_id = "1MxsnnAW9yErCX2ZvuwgM-FtHWJMivA4ZTYEZt-P7nPs"
 sheet_name = "Sheet1"  # Replace if necessary
@@ -42,6 +44,16 @@ df["tem"] = df["tem"].str.rstrip('%').astype(float).div(100).replace(np.nan, Non
 df["Meses"] = df["Meses"].astype(float).replace(np.nan, None)
 
 df = df.where(pd.notnull(df), None)
+
+
+for ticker in df["ticker"]:
+    print(ticker)
+    day, year = cohen.fixed_income_price_var(ticker)
+    df.loc[df["ticker"] == ticker, "price day %"] = day
+    df.loc[df["ticker"] == ticker, "price ytd %"] = year
+
+##df["price day %"] = df["ticker"].apply(lambda ticker: cohen.fixed_income_price_daily_var(ticker)*100)
+##df["price ytd %"] = df["ticker"].apply(lambda ticker: cohen.fixed_income_price_ytd(ticker)*100)
 
 def get_lecaps():
   return df.to_dict('records')
