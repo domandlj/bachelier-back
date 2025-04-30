@@ -84,11 +84,18 @@ class Lecap(BaseModel):
     price_var_daily : Optional[float] = Field(alias='price day %', default=None)
     price_var_ytd : Optional[float] = Field(alias='price ytd %', default=None)
 
+class Bond(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+    report : List[dict] = Field(alias='report', default=None)
+    cf : Dict[str, List[dict]] = Field(alias='cf', default=None)
+
 class Report(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
     
     date: str
     lecaps: List[Lecap] = Field(alias='lecaps', default=None)
+    bonares : Bond = Field(alias='bonares', default=None)
+    globales : Bond = Field(alias='globales', default=None)
 
 # POST endpoint to store a model
 @app.post("/models/")
