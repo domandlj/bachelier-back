@@ -67,6 +67,7 @@ class Model(BaseModel):
     
 class AI(BaseModel):
     lecaps: str
+    hd : str
 
 
 
