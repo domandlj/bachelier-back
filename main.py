@@ -40,6 +40,7 @@ db = client["modeldb"]
 collection = db["models"]
 collection_board = db["board"]
 reports = db["reports"]
+ai = db["ai"]
 
 # Pydantic Model to validate the JSON payload
 class IndexedDBData(BaseModel):
@@ -63,7 +64,9 @@ class Model(BaseModel):
         # Convert ObjectId to string
         data["_id"] = str(data.get("_id", ""))
         return cls(**data)
-
+    
+class AI(BaseModel):
+    lecaps: str
 
 
 
@@ -149,6 +152,23 @@ async def get_report():
 
         # Find the last inserted document
         document = reports.find_one(
+            sort=[("_id", -1)]  # Sort by `_id` in descending order
+        )
+
+        if not document:
+            raise HTTPException(status_code=404, detail="No report found for today")
+        return document
+    except Exception as e:
+        print(f"Error retrieving models: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+
+
+@app.get("/ai", response_model=AI)
+async def get_report():
+    try:
+     
+        # Find the last inserted document
+        document = ai.find_one(
             sort=[("_id", -1)]  # Sort by `_id` in descending order
         )
 
