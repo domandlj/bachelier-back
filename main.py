@@ -95,11 +95,12 @@ class Bond(BaseModel):
 
 class Report(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
-    
     date: str
     lecaps: List[Lecap] = Field(alias='lecaps', default=None)
     bonares : Bond = Field(alias='bonares', default=None)
     globales : Bond = Field(alias='globales', default=None)
+    cer : Bond = Field(alias='cer', default=None)
+
 
 # POST endpoint to store a model
 @app.post("/models/")
