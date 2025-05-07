@@ -93,7 +93,7 @@ class Bond(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
     report : List[dict] = Field(alias='report', default=None)
     cf : Dict[str, List[dict]] = Field(alias='cf', default=None)
-    be_inflation : Optional[str] = Field(alias='be_inflation', default=None)
+    be_inflation : Optional[List[dict]] = Field(alias='be_inflation', default=None)
 
 class Report(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
