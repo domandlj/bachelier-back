@@ -77,7 +77,7 @@ class Lecap(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
     
     ticker: str 
-    fechaVencim: str 
+    fechaVencim: date
     liqui_secu: Optional[str] = Field(alias='liqui_secu')
     dias: Optional[int] = None
     meses: Optional[float] = Field(alias='Meses', default=None)
