@@ -95,6 +95,10 @@ class Bond(BaseModel):
     cf : Dict[str, List[dict]] = Field(alias='cf', default=None)
     be_inflation : Optional[List[dict]] = Field(alias='be_inflation', default=None)
 
+class Futuro(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+    report : List[dict] = Field(alias='report', default=None)
+
 class Report(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
     date: str
@@ -102,6 +106,9 @@ class Report(BaseModel):
     bonares : Bond = Field(alias='bonares', default=None)
     globales : Bond = Field(alias='globales', default=None)
     cer : Bond = Field(alias='cer', default=None)
+    futuros : Futuro = Field(alias='futuros', default=None)
+    sinteticos : Futuro = Field(alias='sinteticos', default=None)
+
 
 
 # POST endpoint to store a model
