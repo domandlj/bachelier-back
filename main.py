@@ -69,6 +69,8 @@ class AI(BaseModel):
     lecaps: str
     hd : str
     cer : str
+    futuros : str
+    sinteticos : str
 
 
 
